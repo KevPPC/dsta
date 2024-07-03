@@ -33,7 +33,7 @@ export class QrCodeContainer extends Component {
           style={previewStyle}
           onError={this.handleError}
           onScan={this.handleScan}
-          facingMode="rear"
+          constraints={ {facingMode: 'environment'} }
           />
         <p>{this.state.result}</p>
       </div>
