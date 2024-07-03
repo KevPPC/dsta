@@ -33,7 +33,7 @@ export const QrCodeContainer = () => {
   return (
     <>
      <div className="App">
-      <h1>QR Code Scanning in React</h1>
+      <h1>QR Code Scanner</h1>
       {
         scanResult
         ?

@@ -17,9 +17,7 @@ export const Footer = () => {
     <footer>
       <Container maxWidth="1270px">
         <Box sx={{ display: 'flex' }}>
-        
         </Box>
-        asdas adsdas
       </Container>
     </footer>
   );
