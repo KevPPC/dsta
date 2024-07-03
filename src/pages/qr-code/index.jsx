@@ -1,132 +1,110 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import {
-  BrowserQRCodeReader,
-  NotFoundException,
-  ChecksumException,
-  FormatException
-} from "@zxing/library";
+// Styles
+import "./QrStyles.css";
 
-export const QrCodeContainer = () => {
+// Qr Scanner
+import QrScanner from "qr-scanner";
+import QrFrame from "../../assets/qr-frame.svg";
 
-  const [selectedDeviceId, setSelectedDeviceId] = useState("");
-  const [code, setCode] = useState("");
-  const [videoInputDevices, setVideoInputDevices] = useState([]);
+const QrCodeContainer = () => {
+  // QR States
+  const scanner = useRef<QrScanner>(null);
+  const videoEl = useRef<HTMLVideoElement>(null);
+  const qrBoxEl = useRef<HTMLDivElement>(null);
+  const [qrOn, setQrOn] = useState<boolean>(true);
 
-  const codeReader = new BrowserQRCodeReader();
+  // Result
+  const [scannedResult, setScannedResult] = useState<string | undefined>("");
 
-  console.log("ZXing code reader initialized");
+  // Success
+  const onScanSuccess = (result) => {
+    // 🖨 Print the "result" to browser console.
+    console.log(result);
+    // ✅ Handle success.
+    // 😎 You can do whatever you want with the scanned result.
+    setScannedResult(result?.data);
+  };
+
+  // Fail
+  const onScanFail = (err) => {
+    // 🖨 Print the "err" to browser console.
+    console.log(err);
+  };
 
   useEffect(() => {
-    codeReader
-      .getVideoInputDevices()
-      .then(videoInputDevices => {
-        setupDevices(videoInputDevices);
-      })
-      .catch(err => {
-        console.error(err);
+    if (videoEl?.current && !scanner.current) {
+      // 👉 Instantiate the QR Scanner
+      scanner.current = new QrScanner(videoEl?.current, onScanSuccess, {
+        onDecodeError: onScanFail,
+        // 📷 This is the camera facing mode. In mobile devices, "environment" means back camera and "user" means front camera.
+        preferredCamera: "environment",
+        // 🖼 This will help us position our "QrFrame.svg" so that user can only scan when qr code is put in between our QrFrame.svg.
+        highlightScanRegion: true,
+        // 🔥 This will produce a yellow (default color) outline around the qr code that we scan, showing a proof that our qr-scanner is scanning that qr code.
+        highlightCodeOutline: true,
+        // 📦 A custom div which will pair with "highlightScanRegion" option above 👆. This gives us full control over our scan region.
+        overlay: qrBoxEl?.current || undefined,
       });
+
+      // 🚀 Start QR Scanner
+      scanner?.current
+        ?.start()
+        .then(() => setQrOn(true))
+        .catch((err) => {
+          if (err) setQrOn(false);
+        });
+    }
+
+    // 🧹 Clean up on unmount.
+    // 🚨 This removes the QR Scanner from rendering and using camera when it is closed or removed from the UI.
+    return () => {
+      if (!videoEl?.current) {
+        scanner?.current?.stop();
+      }
+    };
   }, []);
 
-  function setupDevices(videoInputDevices) {
-    const sourceSelect = document.getElementById("sourceSelect");
-
-    // selects first device
-    setSelectedDeviceId(videoInputDevices[0].deviceId);
-
-    // setup devices dropdown
-    if (videoInputDevices.length >= 1) {
-      setVideoInputDevices(videoInputDevices)
-    }
-  }
-
-  function resetClick() {
-    codeReader.reset();
-    setCode("");
-    console.log("Reset.");
-  }
-
-  function decodeContinuously(selectedDeviceId) {
-    codeReader.decodeFromInputVideoDeviceContinuously(
-      selectedDeviceId,
-      "video",
-      (result, err) => {
-        if (result) {
-          // properly decoded qr code
-          console.log("Found QR code!", result);
-          setCode(result.text);
-        }
-
-        if (err) {
-          setCode("");
-
-          // As long as this error belongs into one of the following categories
-          // the code reader is going to continue as excepted. Any other error
-          // will stop the decoding loop.
-          //
-          // Excepted Exceptions:
-          //
-          //  - NotFoundException
-          //  - ChecksumException
-          //  - FormatException
-
-          if (err instanceof NotFoundException) {
-            console.log("No QR code found.");
-          }
-
-          if (err instanceof ChecksumException) {
-            console.log("A code was found, but it's read value was not valid.");
-          }
-
-          if (err instanceof FormatException) {
-            console.log("A code was found, but it was in a invalid format.");
-          }
-        }
-      }
-    );
-  }
-
-  useEffect(
-    deviceId => {
-      decodeContinuously(selectedDeviceId);
-      console.log(`Started decode from camera with id ${selectedDeviceId}`);
-    },
-    [selectedDeviceId]
-  );
+  // ❌ If "camera" is not allowed in browser permissions, show an alert.
+  useEffect(() => {
+    if (!qrOn)
+      alert(
+        "Camera is blocked or not accessible. Please allow camera in your browser permissions and Reload."
+      );
+  }, [qrOn]);
 
   return (
-    <main class="wrapper">
-      <section className="container" id="demo-content">
-        <div id="sourceSelectPanel">
-          <label for="sourceSelect">Change video source:</label>
-          <select
-            id="sourceSelect"
-            onChange={() => setSelectedDeviceId(sourceSelect.value)}
-          > 
-            { 
-              videoInputDevices.map(element => (
-                <option value={element.deviceId}>{element.label}</option>
-              )) 
-            }
-          </select>
-        </div>
+    <div className="qr-reader">
+      {/* QR */}
+      <video ref={videoEl}></video>
+      <div ref={qrBoxEl} className="qr-box">
+        <img
+          src={QrFrame}
+          alt="Qr Frame"
+          width={256}
+          height={256}
+          className="qr-frame"
+        />
+      </div>
 
-        <div>
-          <video id="video" width="300" height="200" />
-        </div>
-
-        <label>Result:</label>
-        <pre>
-          <code id="result">{code}</code>
-        </pre>
-
-        <button id="resetButton" onClick={() => resetClick()}>
-          Reset
-        </button>
-      </section>
-    </main>
+      {/* Show Data Result if scan is success */}
+      {scannedResult && (
+        <p
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            zIndex: 99999,
+            color: "white",
+          }}
+        >
+          Scanned Result: {scannedResult}
+        </p>
+      )}
+    </div>
   );
-}
+};
 
+export default QrCodeContainer;
 
 
