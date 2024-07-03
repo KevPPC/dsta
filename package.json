@@ -18,9 +18,11 @@
     "axios": "^1.5.1",
     "axios-mock-adapter": "^1.22.0",
     "crypto-js": "^4.1.1",
+    "html5-qrcode": "^2.3.8",
     "jsonwebtoken": "^9.0.2",
     "jwt-simple": "^0.5.6",
     "lodash": "^4.17.21",
+    "qr-scanner": "^1.4.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-error-boundary": "^4.0.11",
@@ -38,6 +40,8 @@
     "zustand": "^4.4.3"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",
