@@ -25,6 +25,8 @@ export class QrCodeContainer extends Component {
       width: 320,
     }
 
+    const cameraDirection = 'rear';
+
     return(
       <div>
         <QrReader
@@ -32,6 +34,7 @@ export class QrCodeContainer extends Component {
           style={previewStyle}
           onError={this.handleError}
           onScan={this.handleScan}
+          facingMode={cameraDirection}
           />
         <p>{this.state.result}</p>
       </div>
