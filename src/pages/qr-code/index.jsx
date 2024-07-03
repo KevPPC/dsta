@@ -1,41 +1,25 @@
-import React, { Component } from 'react'
-import QrReader from 'react-qr-scanner'
 
-export class QrCodeContainer extends Component {
-  constructor(props){
-    super(props)
-    this.state = {
-      delay: 100,
-      result: 'No result',
-    }
+import { useState } from "react";
+import { useZxing } from "react-zxing";
 
-    this.handleScan = this.handleScan.bind(this)
-  }
-  handleScan(data){
-    this.setState({
-      result: data,
-    })
-  }
-  handleError(err){
-    console.error(err)
-  }
-  render(){
-    const previewStyle = {
-      height: 240,
-      width: 320,
-    }
+export const QrCodeContainer = () => {
+  const [result, setResult] = useState("");
+  const { ref } = useZxing({
+    onDecodeResult(result) {
+      setResult(result.getText());
+    },
+  });
 
-    return(
-      <div>
-        <QrReader
-          delay={this.state.delay}
-          style={previewStyle}
-          onError={this.handleError}
-          onScan={this.handleScan}
-          />
-        <p>{this.state.result}</p>
-      </div>
-    )
-  }
-}
+  return (
+    <>
+      <video ref={ref} />
+      <p>
+        <span>Last result:</span>
+        <span>{result}</span>
+      </p>
+    </>
+  );
+};
+
+
 
