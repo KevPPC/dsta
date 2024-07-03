@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import QrReader from 'react-qr-scanner'
 
-class QrCodeContainer extends Component {
+export class QrCodeContainer extends Component {
   constructor(props){
     super(props)
     this.state = {
@@ -39,7 +39,7 @@ class QrCodeContainer extends Component {
   }
 }
 
-export default QrCodeContainer;
+
 
 
 
