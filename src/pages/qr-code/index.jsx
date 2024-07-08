@@ -5,7 +5,11 @@ export const QrCodeContainer = () => {
 
   const [scanResult, setScanResult] = useState(null);
 
-
+  const qrCodeSuccessCallback = (decodedText) => {
+    scanner.clear();
+    setScanResult(decodedText);
+  };
+  
   useEffect(() => {
     
     const scanner  = new Html5Qrcode('reader');
@@ -18,11 +22,7 @@ export const QrCodeContainer = () => {
       fps: 5,
     }
 
-    const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-      console.log(decodedResult);
-      scanner.clear();
-      setScanResult(decodedText);
-    };
+   
 
     scanner.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
 
