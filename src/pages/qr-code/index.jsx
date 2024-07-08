@@ -25,7 +25,9 @@ export const QrCodeContainer = () => {
 
    
 
-    scanner.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
+    // scanner.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
+    scanner.start({ facingMode: "front" }, config, qrCodeSuccessCallback);
+
 
 
     // function success(result) {
