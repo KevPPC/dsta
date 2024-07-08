@@ -5,11 +5,7 @@ export const QrCodeContainer = () => {
 
   const [scanResult, setScanResult] = useState(null);
 
-  const qrCodeSuccessCallback = (decodedText) => {
-    console.log("Function successCallback is called successfully " + decodedText);
-    scanner.clear();
-    setScanResult(decodedText);
-  };
+  
   
   useEffect(() => {
     
@@ -23,10 +19,14 @@ export const QrCodeContainer = () => {
       fps: 5,
     }
 
-   
+    const qrCodeSuccessCallback = (decodedText) => {
+      console.log("Function successCallback is called successfully " + decodedText);
+      scanner.clear();
+      setScanResult(decodedText);
+    };
 
     // scanner.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
-    scanner.start({ facingMode: "front" }, config, qrCodeSuccessCallback);
+    scanner.start({ facingMode: "user" }, config, qrCodeSuccessCallback);
 
 
 
