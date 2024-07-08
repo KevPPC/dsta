@@ -21,7 +21,7 @@ export const QrCodeContainer = () => {
     const qrCodeSuccessCallback = (decodedText, decodedResult) => {
       console.log(decodedResult);
       scanner.clear();
-      setScanResult(decodedResult);
+      setScanResult(decodedText);
     };
 
     scanner.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
@@ -45,7 +45,7 @@ export const QrCodeContainer = () => {
       {
         scanResult
         ?
-        <div>Success: <a href={"http://" + scanResult}>{scanResult}</a></div>
+        <div>Success: {scanResult}</div>
         :
         <div id="reader">Hello</div>
       }
