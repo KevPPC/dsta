@@ -21,12 +21,11 @@ export const QrCodeContainer = () => {
 
     const qrCodeSuccessCallback = (decodedText) => {
       console.log("Function successCallback is called successfully " + decodedText);
-      scanner.clear();
       setScanResult(decodedText);
     };
 
     // scanner.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
-    scanner.start({ facingMode: "user" }, config, qrCodeSuccessCallback);
+    scanner.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
 
 
 
