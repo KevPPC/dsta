@@ -6,6 +6,7 @@ export const QrCodeContainer = () => {
   const [scanResult, setScanResult] = useState(null);
 
   const qrCodeSuccessCallback = (decodedText) => {
+    console.log("Function successCallback is called successfully " + decodedText);
     scanner.clear();
     setScanResult(decodedText);
   };
